@@ -1,4 +1,4 @@
-import statement from "@/chapter1/index";
+import statement from "@/chapter1/work1/statement";
 import invoice from "@/chapter1/invoices.json";
 import plays from "@/chapter1/plays.json";
 
