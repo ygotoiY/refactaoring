@@ -9,9 +9,12 @@ function statement (invoice, plays) {
                             minimumFractionDigits: 2 }).format;
   
     for (let perf of invoice.performances) {
+      // 2. 問い合わせによる一時変数の置き換え
+      // 3. 関数宣言の変更
       const play = plays[perf.playID];
+
       let thisAmount = 0;
-  
+      // 1. 関数の抽出を行う
       switch (play.type) {
       case "tragedy":
         thisAmount = 40000;
@@ -29,7 +32,7 @@ function statement (invoice, plays) {
       default:
           throw new Error(`unknown type: ${play.type}`);
       }
-  
+
       // add volume credits
       volumeCredits += Math.max(perf.audience - 30, 0);
       // add extra credit for every ten comedy attendees
