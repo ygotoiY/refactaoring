@@ -8,9 +8,9 @@ function statement (invoice, plays) {
                           { style: "currency", currency: "USD",
                             minimumFractionDigits: 2 }).format;
 
-    function amountFor(play, perf) {
+    function amountFor(perf) {
         let result = 0;
-        switch (play.type) {
+        switch (playFor(perf).type) {
             case "tragedy":
                 result = 40000;
                 if (perf.audience > 30) {
@@ -25,25 +25,27 @@ function statement (invoice, plays) {
                 result += 300 * perf.audience;
                 break;
             default:
-                throw new Error(`unknown type: ${play.type}`);
+                throw new Error(`unknown type: ${playFor(perf).type}`);
         }
         return result;
+    }
+
+    function playFor(perf) {
+        return plays[perf["playID"]];
     }
 
     for (let perf of invoice.performances) {
       // 2. 問い合わせによる一時変数の置き換え
       // 3. 関数宣言の変更
-      const play = plays[perf.playID];
-
-      let thisAmount = amountFor(play, perf);
+        let thisAmount = amountFor(perf);
 
         // add volume credits
       volumeCredits += Math.max(perf.audience - 30, 0);
       // add extra credit for every ten comedy attendees
-      if ("comedy" === play.type) volumeCredits += Math.floor(perf.audience / 5);
+      if ("comedy" === playFor(perf).type) volumeCredits += Math.floor(perf.audience / 5);
   
       // print line for this order
-      result += `  ${play.name}: ${format(thisAmount/100)} (${perf.audience} seats)\n`;
+      result += `  ${playFor(perf).name}: ${format(thisAmount/100)} (${perf.audience} seats)\n`;
       totalAmount += thisAmount;
     }
     result += `Amount owed is ${format(totalAmount/100)}\n`;
