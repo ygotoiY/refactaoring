@@ -34,19 +34,22 @@ function statement (invoice, plays) {
         return plays[perf["playID"]];
     }
 
-    for (let perf of invoice.performances) {
-      // 2. 問い合わせによる一時変数の置き換え
-      // 3. 関数宣言の変更
-        let thisAmount = amountFor(perf);
+    function volumeCreditsFor(perf) {
+        let result = 0;
+        result += Math.max(perf.audience - 30, 0);
+        // add extra credit for every ten comedy attendees
+        if ("comedy" === playFor(perf).type) result += Math.floor(perf.audience / 5);
 
+        return result;
+    }
+
+    for (let perf of invoice.performances) {
         // add volume credits
-      volumeCredits += Math.max(perf.audience - 30, 0);
-      // add extra credit for every ten comedy attendees
-      if ("comedy" === playFor(perf).type) volumeCredits += Math.floor(perf.audience / 5);
-  
-      // print line for this order
-      result += `  ${playFor(perf).name}: ${format(thisAmount/100)} (${perf.audience} seats)\n`;
-      totalAmount += thisAmount;
+        volumeCredits += volumeCreditsFor(perf);
+
+        // print line for this order
+          result += `  ${playFor(perf).name}: ${format(amountFor(perf)/100)} (${perf.audience} seats)\n`;
+          totalAmount += amountFor(perf);
     }
     result += `Amount owed is ${format(totalAmount/100)}\n`;
     result += `You earned ${volumeCredits} credits\n`;
